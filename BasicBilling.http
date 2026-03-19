@@ -1,0 +1,94 @@
+@baseUrl = http://localhost:5214
+@token = REPLACE_WITH_TOKEN
+
+### Get JWT token for client 100
+POST {{baseUrl}}/api/auth/token
+Content-Type: application/json
+
+{ "clientId": 100 }
+
+###
+
+### Get JWT token for client 200
+POST {{baseUrl}}/api/auth/token
+Content-Type: application/json
+
+{ "clientId": 200 }
+
+###
+
+### Get pending bills for client 100
+GET {{baseUrl}}/api/clients/100/pending-bills
+Authorization: Bearer {{token}}
+
+###
+
+### Get pending bills for client 200
+GET {{baseUrl}}/api/clients/200/pending-bills
+Authorization: Bearer {{token}}
+
+###
+
+### Pay a bill - client 100, Water, 202501
+POST {{baseUrl}}/api/payments
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{ "clientId": 100, "serviceType": "Water", "billingPeriod": "202501" }
+
+###
+
+### Pay a bill - client 100, Electricity, 202501
+POST {{baseUrl}}/api/payments
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{ "clientId": 100, "serviceType": "Electricity", "billingPeriod": "202501" }
+
+###
+
+### Get payment history for client 100
+GET {{baseUrl}}/api/clients/100/payment-history
+Authorization: Bearer {{token}}
+
+###
+
+### Create a new bill for client 200
+POST {{baseUrl}}/api/bills
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{ "clientId": 200, "serviceType": "Water", "billingPeriod": "202503", "amount": 75.50 }
+
+###
+
+### Try to pay an already paid bill (should return error)
+POST {{baseUrl}}/api/payments
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{ "clientId": 100, "serviceType": "Water", "billingPeriod": "202501" }
+
+###
+
+### Try to pay a bill for a non-existent client (should return 404)
+POST {{baseUrl}}/api/payments
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{ "clientId": 999, "serviceType": "Water", "billingPeriod": "202501" }
+
+###
+
+### Try to create a bill with invalid period format (should return 400)
+POST {{baseUrl}}/api/bills
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{ "clientId": 100, "serviceType": "Water", "billingPeriod": "2025-01", "amount": 50.00 }
+
+###
+
+### Get payment history for client 200
+GET {{baseUrl}}/api/clients/200/payment-history
+Authorization: Bearer {{token}}
