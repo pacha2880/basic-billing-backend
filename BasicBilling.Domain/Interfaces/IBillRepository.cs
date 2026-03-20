@@ -7,6 +7,7 @@ namespace BasicBilling.Domain.Interfaces;
 
 public interface IBillRepository
 {
+    Task<Bill?> GetBillAsync(int clientId, ServiceType serviceType, string billingPeriod);
     Task<Bill?> GetPendingBillAsync(int clientId, ServiceType serviceType, string billingPeriod);
     Task<IReadOnlyCollection<Bill>> GetPendingBillsByClientAsync(int clientId);
     Task AddAsync(Bill bill);

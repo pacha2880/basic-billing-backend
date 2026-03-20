@@ -1,6 +1,5 @@
-using System;
-using System.Threading.Tasks;
-using BasicBilling.API.Services;
+using BasicBilling.Application.Clients.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,40 +10,24 @@ namespace BasicBilling.API.Controllers;
 [Authorize]
 public class ClientsController : ControllerBase
 {
-    private readonly IBillingService _billingService;
-    private readonly IPaymentService _paymentService;
+    private readonly IMediator _mediator;
 
-    public ClientsController(IBillingService billingService, IPaymentService paymentService)
+    public ClientsController(IMediator mediator)
     {
-        _billingService = billingService;
-        _paymentService = paymentService;
+        _mediator = mediator;
     }
 
     [HttpGet("{id}/pending-bills")]
     public async Task<IActionResult> GetPendingBills(int id)
     {
-        try
-        {
-            var result = await _billingService.GetPendingBillsAsync(id);
-            return Ok(result);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return NotFound(new { error = ex.Message });
-        }
+        var result = await _mediator.Send(new GetPendingBillsQuery(id));
+        return Ok(result);
     }
 
     [HttpGet("{id}/payment-history")]
     public async Task<IActionResult> GetPaymentHistory(int id)
     {
-        try
-        {
-            var result = await _paymentService.GetPaymentHistoryAsync(id);
-            return Ok(result);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return NotFound(new { error = ex.Message });
-        }
+        var result = await _mediator.Send(new GetPaymentHistoryQuery(id));
+        return Ok(result);
     }
 }

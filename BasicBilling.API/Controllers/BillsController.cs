@@ -1,7 +1,6 @@
-using System;
-using System.Threading.Tasks;
+using BasicBilling.Application.Bills.Commands;
 using BasicBilling.Application.DTOs;
-using BasicBilling.API.Services;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,34 +11,28 @@ namespace BasicBilling.API.Controllers;
 [Authorize]
 public class BillsController : ControllerBase
 {
-    private readonly IBillingService _billingService;
+    private readonly IMediator _mediator;
 
-    public BillsController(IBillingService billingService)
+    public BillsController(IMediator mediator)
     {
-        _billingService = billingService;
+        _mediator = mediator;
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateBill([FromBody] CreateBillRequest request)
     {
-        if (request is null)
-        {
-            return BadRequest();
-        }
+        var command = new CreateBillCommand(
+            request.ClientId,
+            request.ServiceType,
+            request.BillingPeriod,
+            request.Amount);
 
-        try
-        {
-            var created = await _billingService.CreateBillAsync(request);
-            return CreatedAtAction(
-                nameof(ClientsController.GetPendingBills),
-                "Clients",
-                new { id = created.ClientId },
-                created);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
+        var created = await _mediator.Send(command);
+
+        return CreatedAtAction(
+            nameof(ClientsController.GetPendingBills),
+            "Clients",
+            new { id = created.ClientId },
+            created);
     }
-
 }

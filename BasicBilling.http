@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:5214
-@token = REPLACE_WITH_TOKEN
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEwMCIsImNsaWVudElkIjoiMTAwIiwiZXhwIjoxNzc0MDE1NDAxLCJpc3MiOiJCYXNpY0JpbGxpbmcuQVBJIiwiYXVkIjoiQmFzaWNCaWxsaW5nLkNsaWVudCJ9.dielMwLo-cRS2tMX2NhhlH8vYVkf79OJTq60LSA4anc
 
 ### Get JWT token for client 100
 POST {{baseUrl}}/api/auth/token

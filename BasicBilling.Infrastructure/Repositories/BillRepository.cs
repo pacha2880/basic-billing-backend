@@ -18,6 +18,15 @@ public class BillRepository : IBillRepository
         _db = db;
     }
 
+    public Task<Bill?> GetBillAsync(int clientId, ServiceType serviceType, string billingPeriod)
+    {
+        return _db.Bills
+            .Where(b => b.ClientId == clientId
+                        && b.ServiceType == serviceType
+                        && b.BillingPeriod == billingPeriod)
+            .FirstOrDefaultAsync();
+    }
+
     public Task<Bill?> GetPendingBillAsync(int clientId, ServiceType serviceType, string billingPeriod)
     {
         return _db.Bills

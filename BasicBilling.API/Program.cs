@@ -1,6 +1,9 @@
 using System.Text;
 using System.Text.Json.Serialization;
+using BasicBilling.API.Middleware;
 using BasicBilling.API.Services;
+using BasicBilling.Application.Bills.Commands;
+using BasicBilling.Application.Mapping;
 using BasicBilling.Infrastructure.Data;
 using BasicBilling.Infrastructure.Repositories;
 using BasicBilling.Domain.Interfaces;
@@ -60,8 +63,13 @@ builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 
 // Application services
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IBillingService, BillingService>();
-builder.Services.AddScoped<IPaymentService, PaymentService>();
+
+// AutoMapper
+builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+// MediatR
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(typeof(CreateBillHandler).Assembly));
 
 // CORS (allow localhost origins)
 builder.Services.AddCors(options =>
@@ -126,6 +134,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors("Localhost");
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

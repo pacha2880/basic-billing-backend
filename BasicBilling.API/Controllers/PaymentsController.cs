@@ -1,7 +1,6 @@
-using System;
-using System.Threading.Tasks;
 using BasicBilling.Application.DTOs;
-using BasicBilling.API.Services;
+using BasicBilling.Application.Payments.Commands;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,29 +11,22 @@ namespace BasicBilling.API.Controllers;
 [Authorize]
 public class PaymentsController : ControllerBase
 {
-    private readonly IPaymentService _paymentService;
+    private readonly IMediator _mediator;
 
-    public PaymentsController(IPaymentService paymentService)
+    public PaymentsController(IMediator mediator)
     {
-        _paymentService = paymentService;
+        _mediator = mediator;
     }
 
     [HttpPost]
     public async Task<IActionResult> ProcessPayment([FromBody] PaymentRequest request)
     {
-        if (request is null)
-        {
-            return BadRequest();
-        }
+        var command = new ProcessPaymentCommand(
+            request.ClientId,
+            request.ServiceType,
+            request.BillingPeriod);
 
-        try
-        {
-            var result = await _paymentService.ProcessPaymentAsync(request);
-            return Ok(result);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
+        var result = await _mediator.Send(command);
+        return Ok(result);
     }
 }
