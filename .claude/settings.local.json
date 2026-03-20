@@ -6,7 +6,8 @@
       "Bash(dotnet remove:*)",
       "Bash(dotnet test:*)",
       "Bash(dotnet restore:*)",
-      "Bash(dotnet build:*)"
+      "Bash(dotnet build:*)",
+      "Bash(find c:UserssalguactualmenteproyoBasicBillingBackend -type f \\\\\\(-name *.csproj -o -name *.sln \\\\\\))"
     ]
   }
 }
