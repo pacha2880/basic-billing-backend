@@ -2,6 +2,7 @@
 
 ## Solution Structure
 
+```
 BasicBilling/
 ├── BasicBilling.API/
 │   ├── Controllers/
@@ -11,6 +12,9 @@ BasicBilling/
 │   │   └── ClientsController.cs
 │   ├── Middleware/
 │   │   └── ExceptionHandlingMiddleware.cs
+│   ├── Services/
+│   │   ├── AuthService.cs
+│   │   └── IAuthService.cs
 │   ├── Program.cs
 │   └── appsettings.json
 ├── BasicBilling.Application/
@@ -55,18 +59,18 @@ BasicBilling/
 │   │   └── PaymentRepository.cs
 │   └── Migrations/
 └── BasicBilling.Tests/
-    ├── Unit/
-    │   ├── ProcessPaymentHandlerTests.cs
-    │   └── CreateBillHandlerTests.cs
-    └── Integration/
-        └── BillsEndpointTests.cs
+    └── Unit/
+        ├── ProcessPaymentHandlerTests.cs
+        ├── CreateBillHandlerTests.cs
+        └── GetPendingBillsHandlerTests.cs
+```
 
 ## Domain Entities
 
 ### Client
 - Id (int): 100, 200, 300, 400, 500
 - Name (string)
-- Bills (ICollection<Bill>)
+- Bills (ICollection\<Bill\>)
 
 ### Bill
 - Id (int)
@@ -86,37 +90,39 @@ BasicBilling/
 
 ## Repository Interfaces
 
-IClientRepository: GetByIdAsync(int id), ExistsAsync(int id)
-IBillRepository: GetPendingBillAsync(clientId, serviceType, period), GetPendingBillsByClientAsync(clientId), AddAsync(bill), SaveChangesAsync()
-IPaymentRepository: GetPaymentHistoryByClientAsync(clientId), AddAsync(payment), SaveChangesAsync()
+- **IClientRepository:** `GetByIdAsync(int id)`, `ExistsAsync(int id)`
+- **IBillRepository:** `GetBillAsync(clientId, serviceType, period)`, `GetPendingBillAsync(clientId, serviceType, period)`, `GetPendingBillsByClientAsync(clientId)`, `AddAsync(bill)`, `SaveChangesAsync()`
+- **IPaymentRepository:** `GetPaymentHistoryByClientAsync(clientId)`, `AddAsync(payment)`, `SaveChangesAsync()`
 
 ## API Endpoints
 
-POST   /api/auth/token          → Body: { clientId } → returns JWT token (mock)
-POST   /api/bills               → Body: CreateBillRequest → returns BillDto (201)
-POST   /api/payments            → Body: PaymentRequest → returns PaymentHistoryDto (200)
-GET    /api/clients/{id}/pending-bills    → returns BillDto[]
-GET    /api/clients/{id}/payment-history → returns PaymentHistoryDto[]
+| Method | Endpoint | Response |
+|--------|----------|----------|
+| POST | /api/auth/token | JWT token (mock) |
+| POST | /api/bills | BillDto (201) |
+| POST | /api/payments | PaymentHistoryDto (200) |
+| GET | /api/clients/{id}/pending-bills | BillDto[] (OData) |
+| GET | /api/clients/{id}/payment-history | PaymentHistoryDto[] (OData) |
 
-All endpoints except /auth/token require Authorization: Bearer <token> header.
+All endpoints except `/auth/token` require `Authorization: Bearer <token>` header.
 
 ## DTOs
 
-CreateBillRequest: ClientId (int), ServiceType, BillingPeriod (regex ^\d{6}$), Amount (> 0)
-PaymentRequest: ClientId (int), ServiceType, BillingPeriod (regex ^\d{6}$)
-BillDto: Id, ClientId, ServiceType (string), BillingPeriod, Amount, Status (string), CreatedAt
-PaymentHistoryDto: BillId, ServiceType (string), BillingPeriod, AmountPaid, PaidAt, Status ("Paid")
+- **CreateBillRequest:** ClientId (int), ServiceType, BillingPeriod (regex `^\d{6}$`), Amount (> 0)
+- **PaymentRequest:** ClientId (int), ServiceType, BillingPeriod (regex `^\d{6}$`)
+- **BillDto:** Id, ClientId, ServiceType (string), BillingPeriod, Amount, Status (string), CreatedAt
+- **PaymentHistoryDto:** BillId, ServiceType (string), BillingPeriod, AmountPaid, PaidAt, Status ("Paid")
 
 ## Seed Data
 
-Clients: 100 Joseph Carlton, 200 Maria Juarez, 300 Albert Kenny, 400 Jessica Phillips, 500 Charles Johnson
-Periods: 202501 and 202502
-Services: Water, Electricity, Sewer
-Total: 30 bills (5 × 3 × 2), all Pending, amounts random $20–$150
+- Clients: 100 Joseph Carlton, 200 Maria Juarez, 300 Albert Kenny, 400 Jessica Phillips, 500 Charles Johnson
+- Periods: 202501 and 202502
+- Services: Water, Electricity, Sewer
+- Total: 30 bills (5 × 3 × 2), all Pending, amounts random $20–$150
 
 ## Key Rules
 - Never expose domain entities directly — always use DTOs
 - Controllers must be thin — no business logic inside them
-- dotnet run from scratch must apply migrations and seed automatically
+- `dotnet run` from scratch must apply migrations and seed automatically
 - CORS must be open for localhost (Flutter web frontend will connect later)
 - Enums serialized as strings in JSON responses

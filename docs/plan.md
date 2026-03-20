@@ -7,10 +7,10 @@
 | 0 | Design, folder structure, .NET solution created, build passing | ✅ Done |
 | 1 | Backend core: entities, DB, seed, repositories, 5 endpoints + auth | ✅ Done |
 | 2 | Flutter frontend (separate project) | ✅ Done |
-| 3 | Backend refactor: MediatR handlers, AutoMapper, JWT middleware | ✅ Done |
+| 3 | Backend refactor: MediatR handlers, AutoMapper, exception middleware | ✅ Done |
 | 4 | Tests: XUnit unit tests with Moq | ✅ Done |
 | 5 | OData on GET endpoints | ✅ Done |
-| 6 | Delivery: README, cleanup, final verification | ⏳ Next |
+| 6 | Delivery: README, cleanup, final verification | ✅ Done |
 
 ## Decisions Already Made
 - Architecture: DDD with Domain / Application / Infrastructure / API layers
