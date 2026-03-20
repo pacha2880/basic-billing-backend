@@ -10,6 +10,7 @@ REST API for managing utility bill payments (water, electricity, sewer) for 5 cl
 - AutoMapper for entity to DTO mapping
 - JWT Authentication
 - Global exception handling middleware
+- OData for querying and filtering
 - Swagger / OpenAPI
 - XUnit + Moq for unit testing
 
@@ -55,11 +56,27 @@ Body: { "clientId": 100, "serviceType": "Water", "billingPeriod": "202501" }
 GET /api/clients/{id}/pending-bills — Get pending bills (requires JWT)
 GET /api/clients/{id}/payment-history — Get payment history (requires JWT)
 
+## OData Query Examples
+Filter by service type:
+GET /api/clients/100/pending-bills?$filter=serviceType eq 'Water'
+
+Order by amount descending:
+GET /api/clients/100/pending-bills?$orderby=amount desc
+
+Get top 2 results:
+GET /api/clients/100/pending-bills?$top=2
+
+Order payment history by date:
+GET /api/clients/100/payment-history?$orderby=paidAt desc
+
+Filter payment history by service:
+GET /api/clients/100/payment-history?$filter=serviceType eq 'Electricity'
+
 ## Architecture
 - Domain: entities (Client, Bill, Payment), enums, repository interfaces
 - Application: MediatR commands/queries/handlers, DTOs, AutoMapper profile
 - Infrastructure: EF Core DbContext, repository implementations, DataSeeder
-- API: controllers, JWT auth, exception middleware, Swagger
+- API: controllers, JWT auth, exception middleware, OData, Swagger
 
 ## Unit Tests
 Tests cover the core business logic handlers:
@@ -68,5 +85,5 @@ Tests cover the core business logic handlers:
 - GetPendingBillsHandler: valid query, client not found
 
 ## Not Implemented
-- OData filtering (planned, deferred due to time constraints)
-- Integration tests (planned, deferred due to time constraints)
+- Integration tests (deferred due to time constraints)
+- OData on POST endpoints (not applicable)

@@ -2,6 +2,7 @@ using BasicBilling.Application.Clients.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
 
 namespace BasicBilling.API.Controllers;
 
@@ -18,6 +19,7 @@ public class ClientsController : ControllerBase
     }
 
     [HttpGet("{id}/pending-bills")]
+    [EnableQuery]
     public async Task<IActionResult> GetPendingBills(int id)
     {
         var result = await _mediator.Send(new GetPendingBillsQuery(id));
@@ -25,6 +27,7 @@ public class ClientsController : ControllerBase
     }
 
     [HttpGet("{id}/payment-history")]
+    [EnableQuery]
     public async Task<IActionResult> GetPaymentHistory(int id)
     {
         var result = await _mediator.Send(new GetPaymentHistoryQuery(id));
