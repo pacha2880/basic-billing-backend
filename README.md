@@ -11,6 +11,7 @@ REST API for managing utility bill payments (water, electricity, sewer) for 5 cl
 - JWT Authentication
 - Global exception handling middleware
 - Swagger / OpenAPI
+- XUnit + Moq for unit testing
 
 ## How to Build
 dotnet build
@@ -21,6 +22,9 @@ dotnet run --project BasicBilling.API/BasicBilling.API.csproj
 The API will automatically apply migrations and seed the database on startup.
 Swagger available at http://localhost:5214/swagger
 
+## How to Run Tests
+dotnet test
+
 ## Seed Data
 5 clients seeded automatically:
 - 100: Joseph Carlton
@@ -30,6 +34,7 @@ Swagger available at http://localhost:5214/swagger
 - 500: Charles Johnson
 
 30 bills generated (5 clients x 3 services x 2 periods: 202501 and 202502), all Pending.
+To reset the database: delete the .db file and run dotnet run again.
 
 ## API Endpoints
 
@@ -56,6 +61,12 @@ GET /api/clients/{id}/payment-history — Get payment history (requires JWT)
 - Infrastructure: EF Core DbContext, repository implementations, DataSeeder
 - API: controllers, JWT auth, exception middleware, Swagger
 
+## Unit Tests
+Tests cover the core business logic handlers:
+- ProcessPaymentHandler: valid payment, client not found, bill not found
+- CreateBillHandler: valid creation, client not found
+- GetPendingBillsHandler: valid query, client not found
+
 ## Not Implemented
-- OData filtering (planned)
-- Unit tests with XUnit and Moq (planned)
+- OData filtering (planned, deferred due to time constraints)
+- Integration tests (planned, deferred due to time constraints)

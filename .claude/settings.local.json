@@ -3,7 +3,8 @@
     "allow": [
       "Bash(find . -type d -not -path */obj/* -not -path */bin/*)",
       "Bash(dotnet add:*)",
-      "Bash(dotnet remove:*)"
+      "Bash(dotnet remove:*)",
+      "Bash(dotnet test:*)"
     ]
   }
 }
